@@ -154,12 +154,13 @@ length(levels(tallas))
 
 min(tallas)
 
+
 ## ------------------------------------------------------------------------
 
 tallas <- factor(tallas, levels=c("s", "m", "xl"), ordered = TRUE)
 levels(tallas)
 min(tallas) ## Ahora sí
-
+max(tallas)
 
 ## ------------------------------------------------------------------------
 table(tallas)
