@@ -1,0 +1,67 @@
+---
+title: "Curso de Introducción a R"
+output: revealjs::revealjs_presentation
+---
+
+
+Jose Ramón Cajide - Data Scientis en El Arte de Medir
+
+jose.ramon.cajide@gmail.com
+
+Twitter: @jrcajide
+
+
+## Sesión 1
+
+**Introducción a R**
+
+- El ecosistema R
+- Vectores, listas y matrices
+- Data Frames: Manejo de ficheros o conjuntos de datos con R
+
+## Sesión 2
+
+**Visualización**
+
+- Primeros gráficos con R. Creación de gráficos sencillos y rápidos con la función plot
+
+- Gráficos avanzados: Introducción a ggplot, una de las librerías más potentes de visualización.
+
+## Sesión 3
+
+**Estadística básica**
+
+- Descripción estadística de las variables de un conjunto de datos.
+- Medidas centrales y de dispersión
+- Frecuencias
+- Estandarizado y normalizado de datos.
+- Tests estadísticos.
+
+## Sesión 4
+
+**Estadística básica**
+
+- Correlación
+- Regresión lineal
+- Validación cruzada
+- Medidas de errorPredicción
+
+## Sesión 5
+
+**Series temporales**
+
+- Estadística aplicada a series temporales
+
+## Sesión 6
+
+**Obtención de datos**
+
+- Logs, CSV, SQL, APIS (Google Analytics, Search Console, Twitter, etc.), Web scrapping.
+
+## Sesión 7
+
+**Reporting y aplicaciones**
+
+Introducción a R Markdown
+Introducción a Shiny
+
