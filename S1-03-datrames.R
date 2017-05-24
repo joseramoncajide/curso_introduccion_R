@@ -46,12 +46,15 @@ library(gapminder)
 gapminder
 
 # Motivación
+library(tidyverse)
 gapminder %>% 
-  ggplot(aes(year, lifeExp, group = country)) +
-  geom_line(alpha = 1/3)
+  ggplot(aes(year, lifeExp, group = country, color = continent)) +
+  geom_line(alpha = 1/3) 
+
+rm(gapminder)
 
 # importación de datos ----------------------------------------------------
-
+# install.packages('tidyverse')
 library(tidyverse)
 
 gapminder <- read_csv("data/gapminder.csv")
@@ -77,8 +80,8 @@ mean(gapminder[gapminder$continent == "Africa", "gdpPercap"]$gdpPercap, na.rm = 
 # Y para Asia? Y
 
 # Incluido en tidyverse
-install.packages('dplyr')
-library("dplyr")
+# install.packages('dplyr')
+# library("dplyr")
 
 # select()
 year_country_gdp <- select(gapminder,year,country,gdpPercap)
@@ -95,6 +98,8 @@ gapminder %>% head
 
 year_country_gdp <- gapminder %>% select(year,country,gdpPercap)
 
+gapminder %>% select(year,country,gdpPercap)
+gapminder %>% select(-continent, -lifeExp, -pop)
 
 # filter()
 year_country_gdp_euro <- gapminder %>%
@@ -107,7 +112,7 @@ gdp_bycontinents <- gapminder %>%
   group_by(continent) %>%
   summarize(mean_gdpPercap=mean(gdpPercap))
 
-# Ejercicio:
+
 # ¿Qué países tienen la mayor y menor esperanza de vida? 
 
 lifeExp_bycountry <- gapminder %>%
@@ -115,6 +120,7 @@ lifeExp_bycountry <- gapminder %>%
   summarize(mean_lifeExp=mean(lifeExp)) %>% 
   filter(mean_lifeExp == min(mean_lifeExp) | mean_lifeExp == max(mean_lifeExp))
 
+# Ejercicio:
 # ¿Y sólo en Europa?
 
 lifeExp_bycountry <- gapminder %>% 
@@ -210,11 +216,55 @@ gapminder %>%
   mutate(lifeExp_gain = lifeExp - first(lifeExp))
 
 
+# Convertir columnasen filas con gather()
+library(tidyr)
 
+# https://docs.google.com/spreadsheets/d/1NTXQNoY8V0H_EZ_peFmnH1ZcGlxCPhwl2VmJNpiACMU/edit#gid=1098192593
 
+library(googlesheets)
+gap_wide <- read_csv("https://docs.google.com/spreadsheets/d/1NTXQNoY8V0H_EZ_peFmnH1ZcGlxCPhwl2VmJNpiACMU/pub?output=csv")
+# gap_wide <- read.csv('data/gapminder_wide.csv')
+head(gap_wide)
 
+gap_long <- gap_wide %>% 
+  gather(key   = obstype_year,
+         value = obs_values)
+head(gap_long)
+tail(gap_long)
 
+# Debemos indicar las columnas a transformar
+gap_long <- gap_wide %>% 
+  gather(key   = obstype_year,
+         value = obs_values,
+         3:38)  # ó -1:-2
+head(gap_long)
+tail(gap_long)
 
+# Alternativa
+gap_long <- gap_wide %>% 
+  gather(key   = obstype_year,
+         value = obs_values,
+         dplyr::starts_with('pop'),
+         dplyr::starts_with('lifeExp'),
+         dplyr::starts_with('gdpPercap'))
+head(gap_long)
+tail(gap_long)
 
+# ¿Que ocurre con la variable 'obstype_year'?
 
+gap_long <- gap_wide %>% 
+  gather(key   = obstype_year,
+         value = obs_values,
+         -continent, -country) %>%
+  separate(obstype_year,
+           into = c('obs_type','year'),
+           sep="_")
+head(gap_long)
+tail(gap_long)
 
+# spread()
+gap_normal <- gap_long %>% 
+  spread(obs_type, obs_values)
+
+head(gap_normal)
+head(gapminder)

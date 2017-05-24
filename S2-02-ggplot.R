@@ -166,7 +166,8 @@ gappminder_plot + theme_economist() + scale_fill_economist()
 
 gappminder_plot + theme_wsj() + scale_fill_wsj(palette = "black_green")
 
-gappminder_plot + theme_tufte() + scale_fill_tableau()
+(gappminder_plot <- gappminder_plot + theme_tufte() + scale_fill_tableau())
+
 
 
 # labels and legends ------------------------------------------------------
@@ -176,7 +177,7 @@ gappminder_plot + theme_tufte() + scale_fill_tableau()
 gappminder_plot <- gappminder_plot + labs(title="Esperanza de vida y PIB per cápita", 
                     subtitle= "Fuente: Gapminder", 
                     caption = "Visualización: R + ggplot2")
-gappminder_plot
+gappminder_plot + theme(legend.position="bottom")
 
 
 # guardar un gráfico ------------------------------------------------------
@@ -184,10 +185,49 @@ gappminder_plot
 ggsave("gapminder.pdf", gappminder_plot)
 ggsave("gapminder.png", width = 6, height = 4)
 
+
+
 # googleVis ---------------------------------------------------------------
-
-
 
 library(googleVis)
 gg <- gvisMotionChart(gapminder, idvar='country', timevar='year', colorvar ='continent', xvar = 'gdpPercap', yvar = 'lifeExp', sizevar='pop')
-plot(gg)
+plot(gg) # Necesita Flash
+
+
+# install.packages('d3heatmap')
+# library(d3heatmap)
+# 
+# paises <- c("China","France","United Kingdom", "United States", "Egypt", "Japan", "Senegal", "Ukraine", "Uruguay", "Venezuela", "Spain", "Malaysia", "New Zealand", "Angola")
+# 
+# # subset the original data and calculate summary statistics of interest
+# gmun <- 
+#   gapminder %>%
+#   filter(country %in% paises) %>%
+#   group_by(country) %>%
+#   summarise(
+#     meanlifexp = mean(lifeExp),
+#     sdlifeexp = sd(lifeExp),
+#     meangdppercap = mean(gdpPercap),
+#     sdgdppercap = sd(gdpPercap)) 
+# 
+# gmdistmat <- dist(select(gmun, -country))
+# 
+# 
+# d3heatmap(
+#   # calculate distance matrix
+#   gmdistmat,
+#   # name the rows (top to bottom)
+#   labRow = gmun$country, 
+#   # name the columns (left to right)
+#   labCol = gmun$country, 
+#   # turn off dendrogram
+#   dendrogram = 'none')
+# 
+# install.packages('highcharter')
+# library(highcharter)
+# highchart(gapminder, "scatter", x = 'gdpPercap', y = 'lifeExp', group = 'country')
+# 
+# highchart() %>%
+#   hc_add_series(x = gapminder$gdpPercap, y = gapminder$lifeExp, z = gapminder$continent, label = gapminder$continent, color= ) %>%
+#   hc_title(text = "Stanley Kubrick IMDB Ratings By Year")
+
