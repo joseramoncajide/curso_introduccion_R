@@ -1,4 +1,43 @@
 
+# Medidas de centralidad
+
+cars$speed
+
+x <- cars$speed
+n <- length(x)
+
+sum(x) / n
+mean(x)
+
+# La mediana es la observación numérica que divide los datos en dos partes iguales, de manera que una mitad queda bajo la mediana y la otra, por encima. Si tenemos un número impar de observaciones, la mediana es la observación central una vez ordenadas todas ellas. Si disponemos de un número par de observaciones, la mediana es el promedio de las dos observaciones centrales
+
+(mediana <- median(x))
+
+# Moda: La moda es el valor o categoría más frecuente
+
+(velocidades <- unique(x)) 
+velocidades[which.max(tabulate(match(x, velocidades)))]
+
+# Medidas de dispersión
+
+# La varianza es un estadístico que mide la dispersión de una distribución de frecuencias. Específicamente, mide la dispersión de los datos respecto a su media.
+sum((x-mean(x))^2)/((n-1))
+var(x)
+
+# a desviación estándar o típica es un estadístico que mide la dispersión de una distribución de frecuencias respecto a su media. Es, concretamente, la raíz cuadrada de la varianza. Supera la limitación de la varianza de venir expresada en las unidades de la variable al cuadrado. Así, la desviación estándar viene medida en las unidades de la variable.
+
+sqrt(sum((x - mean(x))^2) / (n - 1))
+sqrt(var(x))
+(desv_est <- sd(x))
+
+# Rango o Recorrido: El recorrido o rango de una distribución de frecuencias es un estadístico que mide la dispersión de una distribución de frecuencias. Concretamente, es la diferencia entre el valor máximo y el valor mínimo. Cuanto mayor es el recorrido de una distribución de frecuencias, más dispersa es esta distribución.
+
+(rango <- max(x) - min(x))
+diff(range(x))
+
+# El coeficiente de variación de Pearson es una medida de la dispersión relativa de una distribución de frecuencias. Concretamente se define como el cociente entre la desviación estándar y la media de los datos. Cuanto mayor es este coeficiente, menos representativa es la media (de la distribución) .
+
+(pearson <- desv_est / mean(x))
 
 ## Modelos lineales
 scatter.smooth(x=cars$speed, y=cars$dist, main="Dist ~ Speed") 
