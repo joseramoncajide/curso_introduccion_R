@@ -91,8 +91,10 @@ estrellas <- html_libro %>%
 # Modificamos la URL para simplificar. Movemos pageNumber al final 
 
 url <- "https://www.amazon.es/El-monstruo-colores-Cuentos-flamboyant/product-reviews/8493987743/ref=cm_cr_getr_d_show_all?showViewpoints=1&reviewerType=all_reviews&pageNumber="
+
 num_paginas <- 2
 opiniones_amazon <- NULL
+
 for (j in 1: num_paginas){
   
   html <- read_html(paste0(url, j)) 
@@ -105,7 +107,8 @@ for (j in 1: num_paginas){
     html_nodes("#cm_cr-review_list") %>% 
     html_nodes(".a-icon-star") %>% 
     html_text() %>% 
-    substr(0, 3) %>% { gsub("\\,",".", .) } %>% 
+    str_sub(0, 3) %>% 
+    str_replace(',', '.') %>% 
     as.numeric()
   
   opiniones_amazon <- rbind(opiniones_amazon, data.frame('pagina'=j, 'opinion'=opinion, 'estrellas' = estrellas))
@@ -117,7 +120,7 @@ opiniones_amazon$opinion <- as.character(opiniones_amazon$opinion)
 
 # opiniones_amazon <- read_csv('https://raw.githubusercontent.com/joseramoncajide/curso_introduccion_R/master/data/opiniones_amazon.csv')
 
-# Ejercicio: calcular el sentimiento de cada opinión
+# Calcular el sentimiento de cada opinión
 
 gl_auth('google_cloud_platform.json')
 
@@ -142,7 +145,6 @@ cor(opiniones_amazon$estrellas, opiniones_amazon$puntuacion)
 modelo <- lm(puntuacion ~ estrellas, data=opiniones_amazon)
 
 summary( modelo )
-
 
 # ¿En que opiniones hay más discordancia entre el voto del usuario y el sentimiento asignado?
 
