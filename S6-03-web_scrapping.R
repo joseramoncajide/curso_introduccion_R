@@ -68,13 +68,18 @@ url_libro <- "https://www.amazon.es/El-monstruo-colores-Cuentos-flamboyant/produ
 
 browseURL(url_libro)
 
-(html <- read_html(url_libro))
-(nodo_opiniones <- html_nodes(html, ".review-text"))
-opiniones <- html_text(nodo_opiniones)
+html_libro <- url_libro %>% 
+  read_html()
+
+opiniones <- html_libro %>% 
+  html_nodes(".review-text") %>% 
+  html_text()
+
 head(opiniones, 3)
 
-# Más práctico. ahora con las "estrellas"
-estrellas <- html %>% 
+# Ejercicio: obten la puntuación dada por cada usuario.
+# Deberás obtener sólo las opiniones correspondientes a las anteriores opiniones. Estas se encuentran dentro de una etiqueta HTML con una clase "a-icon-star" que a su vez están dentro de un div con id "cm_cr-review_list"
+estrellas <- html_libro %>% 
   html_nodes("#cm_cr-review_list") %>% 
   html_nodes(".a-icon-star") %>% 
   html_text() %>% 
