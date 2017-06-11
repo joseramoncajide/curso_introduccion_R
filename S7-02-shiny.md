@@ -295,7 +295,7 @@ server <- function(input, output) {
     gDat %>% filter(country == input$select_country & year >= input$year_range[1] & year <= input$year_range[2])
   })
   output$output_country <- renderText({
-    paste("Country selected", input$select_country)
+    paste("Mostrando datos de ", input$select_country)
   })
 }
 ```
@@ -329,7 +329,7 @@ server <- function(input, output) {
     gDat %>% filter(country == input$select_country & year >= input$year_range[1] & year <= input$year_range[2])
   })
   output$output_country <- renderText({
-    paste("Country selected", input$select_country)
+    paste("Mostrando datos de ", input$select_country)
   })
 }
 ```
