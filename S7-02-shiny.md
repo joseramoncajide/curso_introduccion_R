@@ -541,8 +541,8 @@ server <- function(input, output) {
 
 ------------------------------------------------------------------------
 
-Ejercicios
-----------
+Ejercicios:
+===========
 
 -   Cambia el aspecto de la app: <https://rstudio.github.io/shinythemes/>
 -   Modificar la tabla para omitir la columna `country`
