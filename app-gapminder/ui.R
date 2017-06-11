@@ -1,17 +1,14 @@
-shinyUI(fluidPage(
-  titlePanel("App - Gapminder"),
-  
+ui <- fluidPage(
+  titlePanel("Evolución de la experanza media de vida (lifeExp)"),
   sidebarLayout(
-    sidebarPanel("Controles del usuario",
-                 uiOutput("choose_country"),
-                 sliderInput("year_range", 
-                             label = "Range of years:",
-                             min = 1952, max = 2007, value = c(1955, 2005), format = "####")
+    sidebarPanel(
+      uiOutput("choose_country"),
+      sliderInput("year_range", label = "Elije un periodo:", min = 1952, max = 2007, value = c(1955, 2005),format = "####")
     ),
-    mainPanel("Espacio para el gráfico",
-              textOutput("output_country"),
-              plotOutput("ggplot_gdppc_vs_country"),
-              tableOutput("gapminder_table")              
+    mainPanel(
+      h3(textOutput("output_country")),
+      plotOutput("ggplot_lifeExp"),
+      tableOutput("gapminder_table")
     )
   )
-))
+)
