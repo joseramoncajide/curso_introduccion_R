@@ -339,7 +339,7 @@ V.6 Gráfico
 
 #### server.R
 
-Vemos que tanto para la tabla estamos usando el mismo filtro:
+Vemos que tanto para la tabla como para el gráfico estamos usando el mismo filtro:
 
 ``` r
 library(tidyverse)
@@ -365,7 +365,7 @@ server <- function(input, output) {
 }
 ```
 
-Vamos a tratar de organizar el código
+Vamos a tratar de limpiar el código:
 
 ``` r
 library(tidyverse)
