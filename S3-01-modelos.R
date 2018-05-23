@@ -1,3 +1,8 @@
+##########################################################################
+# Jose Cajide - @jrcajide
+# Curso de introducción a R: Modelos
+##########################################################################
+
 
 # Medidas de centralidad
 
@@ -24,7 +29,7 @@ velocidades[which.max(tabulate(match(x, velocidades)))]
 sum((x-mean(x))^2)/((n-1))
 var(x)
 
-# a desviación estándar o típica es un estadístico que mide la dispersión de una distribución de frecuencias respecto a su media. Es, concretamente, la raíz cuadrada de la varianza. Supera la limitación de la varianza de venir expresada en las unidades de la variable al cuadrado. Así, la desviación estándar viene medida en las unidades de la variable.
+# La desviación estándar o típica es un estadístico que mide la dispersión de una distribución de frecuencias respecto a su media. Es, concretamente, la raíz cuadrada de la varianza. Supera la limitación de la varianza de venir expresada en las unidades de la variable al cuadrado. Así, la desviación estándar viene medida en las unidades de la variable.
 
 sqrt(sum((x - mean(x))^2) / (n - 1))
 sqrt(var(x))
@@ -83,48 +88,42 @@ distancias
 
 summary(modelo)$sigma 
 
-
-
-
-# http://varianceexplained.org/RData/code/code_lesson3/#segment1
-
+# Comparación de muestras para ver si tienen medias diferentes
 
 # Pregunta: ¿Influye el tipo de transmisión en el consumo de un coche?
+
+library(dplyr)
+library(ggplot2)
 
 mtcars %>% ggplot(aes(x=hp, y=mpg)) + geom_point() +geom_smooth(method = 'lm', se = F)
 
 mtcars %>% ggplot(aes(x=hp, y=mpg, color=factor(am))) + geom_point() +geom_smooth(method = 'lm', se = F)
-
-# Comparación de muestras
-
-head(mtcars)
 
 mtcars$mpg
 mtcars$am
 
 ggplot(mtcars, aes(x=factor(am), y=mpg)) + 
   geom_boxplot() + 
-  labs(title="", 
-       subtitle= "it appears that automatic cars have a lower miles per gallon, and therefore a lower fuel efficiency, than manual cars do. But it is possible that this apparent pattern happened by random chance", 
+  labs(title="Comparación de medias", 
+       subtitle= "Parece que los coches automáticos consumen más que los manuales. ¿Es una casualidad?", 
        caption = "Visualización: R + ggplot2")
   
-  
-
-
 t.test(mpg ~ am, data=mtcars)
+# H0: Medias iguales
+# H1: Medias no iguales
 
 resultados_test <- t.test(mpg ~ am, data=mtcars)
+
+# p-value: probabilidad de que la diferencia aparente entre ambas medias se deba a la casualidad
+# pValue < 0.05,  H0 No es cierto. Rechazamos H0
 resultados_test$p.value
 
 # Correlación
 
 ggplot(mtcars, aes(x=wt, y=mpg)) + geom_point()
 
-
 mtcars$mpg
 mtcars$wt
-
-
 
 cor.test(mtcars$mpg, mtcars$wt)
 
@@ -136,7 +135,15 @@ library(corrplot)
 corrplot(matriz_correlacion, method="color")
 corrplot(matriz_correlacion, method="number")
 
-# Modelo
+#----------------------------------------------------------------------------
+# Modelado estadístico
+#----------------------------------------------------------------------------
+
+# https://docs.google.com/presentation/d/1sQIiz9klQLdrsI7vLWa17TFU441WSu8cHCtzhXA6sEU/pub?start=false&loop=false&delayms=60000
+
+#----------------------------------------------------------------------------
+# Modelos de regresión
+#----------------------------------------------------------------------------
 
 modelo.1 <- lm(mpg ~ wt, mtcars)
 summary(modelo.1)
@@ -168,10 +175,6 @@ coche_nuevo
 predict(modelo.2, coche_nuevo)
 
 
-# Anova: comparación de modelos
-anova(modelo.1, modelo.2)
-
-
 # Es válido este modelo para predecir?
 
 set.seed(100) 
@@ -193,7 +196,8 @@ consumos <- data.frame(cbind(consumo_real=datos_validacion$mpg, consumo_estimado
 consumos
 
 
-# Ejercicio: Repite el modelo incluyendo la variable "am": transmisión y comprueba si esta afecta al consumo
+# Ejercicio 1: Repite el modelo incluyendo la variable "am": transmisión y comprueba si esta afecta al consumo
+
 
 
 
@@ -204,6 +208,18 @@ plot(fitted(modelo.3), resid(modelo.3))
 abline(h = 0)
 
 
+# Ejercicio 2: Encuenta el modelo de regresión lineal que mejor se ajuste a los siguientes datos:
+
+ventas <- c(10,12,11,13,12,14,16,12,14,11,10,19,8.5,8,9,13,16,18,20,22)
+tv <- c(13,14,15,17,17.5,13,14.5,9,8,9,8,10,17,18,18.5,19,20,20,13,14)
+radio <-c(56,55,60,65,69,67,68,67,97,66,65,60,70,110,75,80,85,90,56,55)
+online <- c(40,40,42,50,40,44,40,44,46,46,45,110,30,50,45,40,80,90,90, 110)
+
+#----------------------------------------------------------------------------
+# Modelos de clasificación
+#----------------------------------------------------------------------------
+
+# https://docs.google.com/presentation/d/14ac22V-8Y-69JzBW8FGwxJGqpOhg00pLmdr86cAWFF8/edit?usp=sharing
 
 # Regresión logística
 
@@ -227,7 +243,7 @@ plot(modelo.4.roc)
 modelo.4.roc$auc
 
 
-
+datos_validacion$pred
 pred.logit <- rep(0,length(datos_validacion$pred))
 pred.logit[datos_validacion$pred>=0.9] <- 1
 pred.logit
@@ -236,7 +252,7 @@ modelo.4.roc.ajustado <- pROC::roc(datos_validacion$am, pred.logit)
 plot(modelo.4.roc.ajustado)
 
 
-install.packages("randomForest")
+# install.packages("randomForest")
 library(randomForest)
 
 table(mtcars$am)/nrow(mtcars)
@@ -274,7 +290,7 @@ varImpPlot(modelo.5,
 
 
 # Árbol de decisión
-
+# install.packages('party')
 library (party)
 
 modelo.6 <- ctree (am ~ ., data = datos_entrenamiento)  
@@ -296,9 +312,11 @@ mean (valores_estimados != valores_actuales)
 
 
 
-# EJERCICIO
+#----------------------------------------------------------------------------
+# Ejercicio de clasificación y árboles
+#----------------------------------------------------------------------------
 #https://archive.ics.uci.edu/ml/datasets/Statlog+(German+Credit+Data)
-
+library(readr)
 credit <- read_csv('https://raw.githubusercontent.com/joseramoncajide/curso_introduccion_R/master/data/german_credit.csv')
 str(credit)
 names(credit)
@@ -341,8 +359,30 @@ plot(modelo_scoring.roc)
 modelo_scoring.roc$auc
 
 
-# Clustering jerárquico
+# Árbol -------------------------------------------------------------------
 
+library(rpart)
+modelo_scoring.2 <- rpart(good_bad~.,data=datos_entrenamiento)
+
+plot(modelo_scoring.2)
+text(modelo_scoring.2)
+
+datos_validacion$score_rpart <- predict(modelo_scoring.2,type='vector', newdata = datos_validacion)
+
+datos_validacion[, c('default', 'score_rpart')]
+
+modelo_scoring.2.roc <- pROC::roc(datos_validacion$default, datos_validacion$score_rpart)
+plot(modelo_scoring.2.roc)
+modelo_scoring.2.roc$auc
+
+
+#----------------------------------------------------------------------------
+# Agrupamiento
+#----------------------------------------------------------------------------
+
+# Agrupamiento jerárquico
+
+# Preparación de los datos
 # https://en.wikipedia.org/wiki/Standard_score
 
 mpg <- mtcars$mpg
@@ -364,7 +404,6 @@ rect.hclust(cluster_jerarquico, k=5, border="red")
 
 grupos <- cutree(cluster_jerarquico, 5)
 
-
 mtcars$grupo <- grupos
 table(mtcars$grupo)
 
@@ -373,6 +412,7 @@ resumen
 
 
 # K-means
+# https://github.com/joseramoncajide/master_data_science_capstone
 # https://es.wikipedia.org/wiki/K-means
 
 
@@ -380,11 +420,10 @@ resumen
 wss <- (nrow(mtcars.escalado)-1)*sum(apply(mtcars.escalado,2,var))
 for (i in 2:15) wss[i] <- sum(kmeans(mtcars.escalado, 
                                      centers=i)$withinss)
-plot(1:15, wss, type="b", xlab="Number of Clusters",
-     ylab="Within groups sum of squares")
-# check out the plot
+plot(1:15, wss, type="b", xlab="Número de cluster",
+     ylab="Error")
 
-modelo_kmeans <- kmeans(mtcars.escalado, 5) # 5 cluster solution
+modelo_kmeans <- kmeans(mtcars.escalado, 5) 
 mtcars$grupo_kmeans <- modelo_kmeans$cluster
 
 resumen <- mtcars %>% group_by(grupo_kmeans) %>% summarise_all(mean) %>% mutate(num_coches = table(mtcars$grupo_kmeans))
@@ -393,10 +432,11 @@ resumen
 library(cluster) 
 clusplot(mtcars, mtcars$grupo_kmeans, color=TRUE, shade=TRUE, labels=2, lines=0, main = "Agrupación")
 
+# Reducción de la dimensionalidad
 
-# PCA
 componentes_principales <- prcomp(mtcars.escalado, center=F, scale=F,retx=T)
 summary(componentes_principales)
+
 # Loadings o ejes principales
 componentes_principales$rotation
 
@@ -404,5 +444,49 @@ plot(componentes_principales)
 biplot(componentes_principales)
 
 
+#----------------------------------------------------------------------------
+# Análisis factorial
+#----------------------------------------------------------------------------
+
+# Una consultora de investigación de mercados ha sido contratada para realizar una acción de comunicación de una empresa del sector del mueble. No tiene muy claro cuál debe ser el enfoque porque no conoce la industria en profundidad, por lo que ha decidido realizar diversas técnicas cualitativas destacando las reuniones en grupo y el braimstorming. En varias de estas reuniones preguntaron a los asistentes que asociaran varios aspectos de los muebles con los diferentes fabricantes y cadenas reconocidos a nivel nacional e internacional.  Los resultados, en formato tabla de doble entrada, se recogen a continuación
 
 
+library(ca)
+library(FactoMineR)
+library(factoextra)
+library("graphics")
+library("corrplot")
+
+# Lectura del dataset
+estudio <- read.table('data/encuesta.txt')
+
+# Comprobación de los datos importados
+head(estudio)
+
+# Inspeccionamos las variables
+summary(estudio)
+
+# Establecemos los nombres de las variables (Atributos) y observaciones (Tipos de establecimiento)
+colnames(estudio) <- c('Calidad', 'Gestion.Stock', 'Diseno', 'Innovacion')
+row.names(estudio) <- c('Ikea', 'Leroy.Merlin','Conforama','Corte.Ingles.Hogar','Muebles.Rey')
+
+mosaicplot(estudio, shade = TRUE, las=2, main = "Valoración de los tipos de establecimiento en función de sus atributos")
+
+colMeans(estudio)
+rowMeans(estudio)
+
+
+# Realziamos el análisis de correspondencias simples y visualizamos los resultados
+summary(ca(estudio))
+
+# La representación simétrica de las modalidades en el primer plano factorial es la siguiente, obtenida con la sentencia:
+plot(ca(estudio))
+plot(ca(estudio), map = 'rowprincipal')
+
+# Podemo realizar el análisis con el paquete FactoMineR
+(CA.res <- CA(estudio, graph = F))
+
+# Dibujamos el mapa de factores
+plot(CA.res, mass = TRUE, contrib = "absolute", map = "rowgreen", arrows = c(FALSE, TRUE)) 
+
+ellipseCA(CA.res,ellipse="row", sub="Mapa de factores")
