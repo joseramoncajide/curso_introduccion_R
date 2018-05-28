@@ -343,6 +343,7 @@ datos_validacion <- credit[-filas_aletorias,]
 
 
 good_bad <- datos_entrenamiento$default
+table(good_bad)
 
 # datos_entrenamiento<-subset(datos_entrenamiento, select=-default)
 datos_entrenamiento <- datos_entrenamiento %>% dplyr::select(-(default))
@@ -374,6 +375,21 @@ datos_validacion[, c('default', 'score_rpart')]
 modelo_scoring.2.roc <- pROC::roc(datos_validacion$default, datos_validacion$score_rpart)
 plot(modelo_scoring.2.roc)
 modelo_scoring.2.roc$auc
+
+
+install.packages("FFTrees")
+library("FFTrees")
+
+datos_entrenamiento$default <- good_bad
+datos_validacion <- credit[-filas_aletorias,]
+modelo_scoring.3 <- FFTrees(default ~ .,data=datos_entrenamiento,data.test = datos_validacion)
+modelo_scoring.3$auc
+
+plot(modelo_scoring.3,
+     main = "German Credit Data",decision.labels = c("Good", "Bad"))
+
+plot(modelo_scoring.3,
+     main = "German Credit Data",decision.labels = c("Good", "Bad"), tree = 7)
 
 
 #----------------------------------------------------------------------------
