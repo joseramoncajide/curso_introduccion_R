@@ -1,0 +1,64 @@
+---
+title: "Airbnb - Alojamientos MAD"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: row
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+
+```
+
+```{r data_load}
+
+
+```
+
+Column {.sidebar}
+-----------------------------------------------------------------------
+
+```{r}
+
+
+hr()
+
+
+
+hr()
+
+
+```
+
+Row {.tabset .tabset-fade } 
+-----------------------------------------------------------------------
+
+### Precios por localización
+
+```{r}
+
+
+
+```
+
+### Mapa de alojamientos
+
+```{r}
+
+```
+
+Row {.tabset .tabset-fade } 
+-----------------------------------------------------------------------
+
+### Alojamientos por barrio
+
+```{r}
+
+
+```
+
+### Precios por barrio
+
+```{r}
+
+```

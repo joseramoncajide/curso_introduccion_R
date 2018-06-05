@@ -1,0 +1,128 @@
+---
+title: "R Notebook"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+
+```{r include=FALSE}
+library(shiny)
+library(flexdashboard)
+library(tidyverse)
+library(forcats)
+library(viridis)
+library(leaflet)
+library(plotly)
+```
+
+```{r message=FALSE, warning=FALSE}
+airbnb_data = read_csv("./data/listings.csv.zip") %>%
+  select(neighbourhood_group, neighbourhood, price, room_type, latitude, longitude)
+
+airbnb_data
+```
+
+```{r}
+district <- airbnb_data %>% 
+  distinct(neighbourhood_group) %>% 
+  pull()
+
+district
+```
+
+```{r}
+  selectInput("dist", 
+              label = h3("Elije distrito"),
+              choices = district, 
+              selected = "Salamanca")
+```
+
+```{r message=FALSE, warning=FALSE}
+  max_price = airbnb_data %>% 
+    filter(neighbourhood_group == "Salamanca") %>% 
+    distinct(price) %>% 
+    max()
+  
+  min_price = airbnb_data %>% 
+    filter(neighbourhood_group == "Salamanca") %>% 
+    distinct(price) %>% min()
+  
+  sliderInput("price_range", 
+              label = h3("Rango de precio"), 
+              min = min_price, 
+              max = max_price, 
+              value = c(100, 400))
+```
+
+```{r}
+ room_choice = airbnb_data %>% 
+    distinct(room_type) %>% 
+    pull()
+  
+  radioButtons("room_choice", label = h3("Tipo de habitación"),
+      choices = room_choice, 
+      selected = "Entire home/apt")
+```
+
+```{r}
+ airbnb_data %>%
+    filter(neighbourhood_group == "Salamanca", 
+           price %in% 50:100,
+           room_type == "Entire home/apt") %>%
+    mutate(text_label = paste0("Precio: ", price, "€")) %>% 
+    plot_ly(x = ~longitude, y = ~latitude, type = "scatter", mode = "markers",
+          alpha = 0.5, 
+          color = ~price,
+          colors = viridis_pal(option = "D")(10), 
+          text = ~text_label)
+```
+
+```{r message=FALSE, warning=FALSE}
+ airbnb_data %>%
+    filter(neighbourhood_group == "Centro", 
+           price %in% 50:100,
+           room_type == "Entire home/apt") %>%
+    leaflet() %>%
+    setView(lng = -3.7037902, lat = 40.4167754, zoom = 12) %>% 
+    addProviderTiles(providers$CartoDB.Positron) %>% 
+    # addTiles() %>% 
+    addMarkers(
+      clusterOptions = markerClusterOptions()
+    )
+```
+
+
+```{r message=FALSE, warning=FALSE}
+
+x <- list(
+  title = "",
+  tickangle = 40,
+  tickfont = list(
+    size = 8  
+  )
+)
+
+y <- list(
+  title = "# de alojamientos"
+)
+ airbnb_data %>%
+    filter(neighbourhood_group == "Centro", 
+           price %in% 50:100,
+           room_type == "Entire home/apt") %>%
+    count(neighbourhood) %>% 
+    mutate(neighbourhood = fct_reorder(neighbourhood, n)) %>% 
+    plot_ly(x = ~neighbourhood, y = ~n, color = ~neighbourhood, type = "bar", colors = viridis_pal(option = "D")(10)) %>%
+    layout(xaxis = x, yaxis = y)
+```
+
+```{r}
+ airbnb_data %>%
+    filter(neighbourhood_group == "Centro", 
+           price %in% 50:100,
+           room_type == "Entire home/apt") %>%
+    plot_ly(y = ~price, color = ~neighbourhood, type = "box",
+          colors = viridis_pal(option = "D")(10)) %>%
+    layout(xaxis = x)
+```
+
