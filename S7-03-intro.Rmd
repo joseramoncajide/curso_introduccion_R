@@ -84,12 +84,54 @@ district
            price %in% 50:100,
            room_type == "Entire home/apt") %>%
     leaflet() %>%
-    setView(lng = -3.7037902, lat = 40.4167754, zoom = 12) %>% 
-    addProviderTiles(providers$CartoDB.Positron) %>% 
-    # addTiles() %>% 
+    addTiles() %>% 
+    setView(lng = -3.7037902, lat = 40.4167754, zoom = 14) %>% 
     addMarkers(
       clusterOptions = markerClusterOptions()
     )
+```
+
+
+```{r message=FALSE, warning=FALSE}
+ airbnb_data %>%
+    filter(neighbourhood_group == "Centro", 
+           price %in% 50:100,
+           room_type == "Entire home/apt") %>%
+    leaflet() %>%
+    addTiles(
+        urlTemplate = "//{s}.tiles.mapbox.com/v3/jcheng.map-5ebohr46/{z}/{x}/{y}.png",
+        attribution = 'Maps by <a href="http://www.mapbox.com/">Mapbox</a>'
+      ) %>% 
+    setView(lng = -3.7037902, lat = 40.4167754, zoom = 14) %>% 
+    addMarkers(
+      clusterOptions = markerClusterOptions()
+    )
+```
+
+```{r message=FALSE, warning=FALSE}
+
+map_data <- airbnb_data %>%
+    filter(neighbourhood_group == "Centro", 
+           price %in% 50:100,
+           room_type == "Entire home/apt") %>%
+    mutate(price = price/sum(price), price = ntile(price, 10))
+
+price_bins <- sort(unique(map_data$price))
+binpal <- colorBin(viridis_pal(option = "C")(10), price_bins, 10, pretty = FALSE)
+
+
+map_data %>% 
+    leaflet() %>%
+    addTiles(
+        urlTemplate = "//{s}.tiles.mapbox.com/v3/jcheng.map-5ebohr46/{z}/{x}/{y}.png",
+        attribution = 'Maps by <a href="http://www.mapbox.com/">Mapbox</a>'
+      ) %>% 
+    setView(lng = -3.7037902, lat = 40.4167754, zoom =14) %>% 
+    addCircles(~longitude, ~latitude, radius=~price * 2.5, 
+        stroke=FALSE, fillOpacity=0.9, fillColor=~binpal(price)) %>% 
+   addLegend(position = 'bottomright',
+            colors = viridis_pal(option = "C")(10),
+            labels = price_bins)
 ```
 
 
