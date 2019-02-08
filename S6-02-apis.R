@@ -24,8 +24,8 @@ access_token_secret <- ""
 # Autenticacion
 setup_twitter_oauth(api_key,api_secret,access_token,access_token_secret)
 
-termino_a_buscar <- "#CelebraciónChampionsTotal"
-numero_tweets <- 100
+termino_a_buscar <- "#DataScience"
+numero_tweets <- 10
 
 tweets <- searchTwitter(termino_a_buscar, 
                         n=numero_tweets, 
@@ -35,16 +35,15 @@ tweets <- searchTwitter(termino_a_buscar,
 # tweets <- readRDS('data/tweets.Rds')
 
 (tweet <- tweets[[1]]) 
-(tweet <- tweets[[96]]) 
 str(tweet)
 texto_tweet <- tweet$getText()
 
 # https://cloud.google.com/natural-language/?hl=es
-devtools::install_github("MarkEdmondson1234/googleLanguageR")
+# install.packages("googleLanguageR")
 library(googleLanguageR)
 
 # https://cloud.google.com/free/
-gl_auth('google_cloud_platform.json')
+gl_auth('cpb100-162913-faf075966c64.json')
 
 resultado_api <- gl_nlp(texto_tweet)
 (scoring <- resultado_api$documentSentiment$score)
